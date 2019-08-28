@@ -8,8 +8,9 @@ defmodule ExZkb.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: ExZkb.Worker.start_link(arg)
-      {ExZkb.Client, :ok},
-      ExZkb.PFRepo
+      ExZkb.PFRepo,
+      ExZkb.Pathfinder.Worker,
+      {ExZkb.Client, :ok}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

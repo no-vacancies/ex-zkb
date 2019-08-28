@@ -3,17 +3,12 @@ defmodule ExZkb.Pathfinder.Chain do
   Functions for building the home chain from data in the Pathfinder database
   """
   import Ecto.Query
+  require Logger
 
   alias ExZkb.PFRepo
   alias ExZkb.Pathfinder.{Connection, System}
 
   def find_connections(map_id) do
-    _ = """
-    SELECT src.alias, src.systemId, src.id, dst.alias, dst.systemId, dst.id FROM connection c
-    INNER JOIN system src ON src.id = c.source
-    INNER JOIN system dst ON dst.id = c.target
-    WHERE c.mapId = 2;
-    """
     query = from c in Connection,
               join: src in System,
               on: [id: c.source],
@@ -41,6 +36,26 @@ defmodule ExZkb.Pathfinder.Chain do
     |> Graph.add_edges(all_connections)
   end
 
+  def connected_systems(chain, system) when is_integer(system) do
+    connected_systems(chain, [system])
+  end
+
+  def connected_systems(chain, systems) when is_list(systems) do
+    Graph.reachable(chain, systems)
+  end
+
+  def init_chain(map_id, root) do
+    chain = build_chain(map_id)
+
+    %{
+      map_id: map_id,
+      root: root,
+      chain: chain,
+      connected: connected_systems(chain, root),
+      updated: DateTime.utc_now()
+    }
+  end
+
   def print_chain(chain) do
     {:ok, dot} = Graph.Serializers.DOT.serialize(chain)
     IO.puts(dot)
@@ -55,18 +70,6 @@ defmodule ExZkb.Pathfinder.Chain do
   end
 
   def system_labels(map_id) do
-    PFRepo.query("""
-    SELECT src.alias, src.systemId
-    FROM connection c
-    INNER JOIN system src on src.id = c.source
-    WHERE c.mapId = $1
-    UNION
-    SELECT dst.alias, dst.systemId
-    FROM connection c
-    INNER JOIN system dst on dst.id = c.target
-    WHERE c.mapId = $1
-    """, [map_id])
-
     target_query = from c in Connection,
                    join: dst in System,
                    on: [id: c.target],
