@@ -8,7 +8,7 @@ defmodule ExZkb.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: ExZkb.Worker.start_link(arg)
-      ExZkb.PFRepo,
+      ExZkb.Pathfinder.Repo,
       ExZkb.Pathfinder.Worker,
       {ExZkb.Client, :ok}
     ]

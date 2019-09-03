@@ -3,7 +3,7 @@ defmodule ExZkb.Handler do
   Handler functions for further processing parsed messages from the zkb webhook
   """
   require Logger
-  alias ExZkb.Pathfinder.Worker, as: PF
+  alias ExZkb.Pathfinder, as: PF
 
   def handle(%{"solar_system_id" => system_id, "killmail_id" => kill_id} = _parsed) do
     case PF.in_chain?(system_id) do
@@ -15,5 +15,6 @@ defmodule ExZkb.Handler do
 
   def handle(parsed) do
     Logger.info(~s(Handling unknown message #{inspect parsed}))
+    :ok
   end
 end

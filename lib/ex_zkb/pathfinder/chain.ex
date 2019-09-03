@@ -5,8 +5,7 @@ defmodule ExZkb.Pathfinder.Chain do
   import Ecto.Query
   require Logger
 
-  alias ExZkb.PFRepo
-  alias ExZkb.Pathfinder.{Connection, System}
+  alias ExZkb.Pathfinder.{Connection, Repo, System}
 
   def find_connections(map_id) do
     query = from c in Connection,
@@ -17,7 +16,7 @@ defmodule ExZkb.Pathfinder.Chain do
               where: c.mapId == ^map_id,
               select: {src.systemId, dst.systemId}
 
-    PFRepo.all(query)
+    Repo.all(query)
   end
 
   def bidirectional(connections) do
@@ -83,6 +82,6 @@ defmodule ExZkb.Pathfinder.Chain do
             select: {src.systemId, src.alias},
             union: ^target_query
 
-    PFRepo.all(query)
+    Repo.all(query)
   end
 end
