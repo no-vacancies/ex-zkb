@@ -1,7 +1,10 @@
-use Mix.Config
+import Config
 
-config :ex_zkb, ExZkb.Pathfinder.Repo,
-  database: "pathfinder",
-  username: "pathfinder",
-  password: "pathfinder",
-  hostname: "localhost"
+config :logger,
+  level: :warn,
+  truncate: 4096
+
+config :ex_zkb,
+  ecto_repos: [ExZkb.Pathfinder.Repo]
+
+import_config "#{Mix.env()}.exs"
