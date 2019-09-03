@@ -10,7 +10,7 @@ defmodule ExZkb.Application do
       # Starts a worker by calling: ExZkb.Worker.start_link(arg)
       ExZkb.Pathfinder.Repo,
       ExZkb.Pathfinder.Worker,
-      {ExZkb.Client, :ok}
+      ExZkb.Client
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

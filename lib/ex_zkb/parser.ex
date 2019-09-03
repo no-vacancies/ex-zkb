@@ -5,12 +5,12 @@ defmodule ExZkb.Parser do
   require Logger
 
   def parse(%{"solar_system_id" => system_id} = kill) do
-    Logger.info(~s(Kill in #{system_id}: #{kill["zkb"]["url"]}))
+    Logger.debug(~s(Kill in #{system_id}: #{kill["zkb"]["url"]}))
     kill
   end
 
   def parse(msg) do
-    Logger.info("Unhandled message #{inspect msg}")
+    Logger.debug("Unhandled message #{inspect msg}")
     :ok
   end
 end
