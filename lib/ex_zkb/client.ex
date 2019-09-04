@@ -114,7 +114,7 @@ defmodule ExZkb.Client do
     {:ok, state}
   end
 
-  defp process_json_frame(message) do
+  def process_json_frame(message) do
     message
     |> Parser.parse()
     |> Handler.handle()
