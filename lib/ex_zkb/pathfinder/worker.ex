@@ -18,12 +18,20 @@ defmodule ExZkb.Pathfinder.Worker do
     GenServer.call(__MODULE__, {:check_in_chain, system_id})
   end
 
+  def route(system_id) do
+    GenServer.call(__MODULE__, {:get_route, system_id})
+  end
 
   # Server Callbacks
 
   def handle_call({:check_in_chain, system_id}, _, state) do
     state = maybe_update(state)
     reply = system_id in state.connected
+    {:reply, reply, state}
+  end
+
+  def handle_call({:get_route, system_id}, _, state) do
+    reply = Chain.route(state, system_id)
     {:reply, reply, state}
   end
 

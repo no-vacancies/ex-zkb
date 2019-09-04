@@ -7,15 +7,23 @@ defmodule ExZkb.Pathfinder.Chain do
 
   alias ExZkb.Pathfinder.{Connection, Repo, System}
 
+  defstruct [
+    :map_id,
+    :root,
+    :chain,
+    :connected,
+    :updated
+  ]
+
   def find_connections(map_id) do
     query =
       from(c in Connection,
-              join: src in System,
-              on: [id: c.source],
-              join: dst in System,
-              on: [id: c.target],
-              where: c.mapId == ^map_id,
-              select: {src.systemId, dst.systemId}
+        join: src in System,
+        on: [id: c.source],
+        join: dst in System,
+        on: [id: c.target],
+        where: c.mapId == ^map_id,
+        select: {src.systemId, dst.systemId}
       )
 
     Repo.all(query)
@@ -48,7 +56,7 @@ defmodule ExZkb.Pathfinder.Chain do
   def init_chain(map_id, root) do
     chain = build_chain(map_id)
 
-    %{
+    %__MODULE__{
       map_id: map_id,
       root: root,
       chain: chain,
@@ -57,9 +65,19 @@ defmodule ExZkb.Pathfinder.Chain do
     }
   end
 
+  def route(%__MODULE__{} = chain, system_id) do
+    Graph.dijkstra(chain.chain, chain.root, system_id)
+    |> Enum.map(&label_for_system(chain, &1))
+  end
+
   def print_chain(chain) do
     {:ok, dot} = Graph.Serializers.DOT.serialize(chain)
     IO.puts(dot)
+  end
+
+  def label_for_system(%__MODULE__{chain: g}, system_id) do
+    Graph.vertex_labels(g, system_id)
+    |> hd
   end
 
   defp create_graph() do
@@ -73,19 +91,19 @@ defmodule ExZkb.Pathfinder.Chain do
   def system_labels(map_id) do
     target_query =
       from(c in Connection,
-                   join: dst in System,
-                   on: [id: c.target],
-                   where: c.mapId == ^map_id,
-                   select: {dst.systemId, dst.alias}
+        join: dst in System,
+        on: [id: c.target],
+        where: c.mapId == ^map_id,
+        select: {dst.systemId, dst.alias}
       )
 
     query =
       from(c in Connection,
-            join: src in System,
-            on: [id: c.source],
-            where: c.mapId == ^map_id,
-            select: {src.systemId, src.alias},
-            union: ^target_query
+        join: src in System,
+        on: [id: c.source],
+        where: c.mapId == ^map_id,
+        select: {src.systemId, src.alias},
+        union: ^target_query
       )
 
     Repo.all(query)

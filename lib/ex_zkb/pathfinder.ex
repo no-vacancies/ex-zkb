@@ -16,4 +16,9 @@ defmodule ExZkb.Pathfinder do
   def in_chain?(system_id) do
     Worker.in_chain?(system_id)
   end
+
+  @spec route(integer()) :: list(integer())
+  def route(system_id) do
+    Worker.route(system_id)
+  end
 end
