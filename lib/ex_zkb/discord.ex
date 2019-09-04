@@ -5,8 +5,6 @@ defmodule ExZkb.Discord do
   alias ExZkb.Discord.Message
   alias ExZkb.Kill
 
-  @webhook_url Application.get_env(:ex_zkb, ExZkb.Discord)[:webhook_url] || ""
-
   def format(%Kill{in_chain: true} = kill) do
     system = List.last(kill.route)
     route = Enum.join(kill.route, " -> ")
@@ -29,6 +27,7 @@ defmodule ExZkb.Discord do
   def dispatch(%Message{} = message) do
     message = Jason.encode!(message)
     headers = [{"Content-Type", "application/json"}]
-    HTTPoison.post!(@webhook_url, message, headers)
+    webhook_url = Application.get_env(:ex_zkb, ExZkb.Discord)[:webhook_url] || ""
+    HTTPoison.post!(webhook_url, message, headers)
   end
 end
