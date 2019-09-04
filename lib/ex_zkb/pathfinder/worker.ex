@@ -4,8 +4,9 @@ defmodule ExZkb.Pathfinder.Worker do
   alias ExZkb.Pathfinder.Chain
 
   @map_id 2
-  @home_chain_root 31002217
-  @map_refresh_interval 60 #seconds, only triggered on websocket frame received
+  @home_chain_root 31_002_217
+  # seconds, only triggered on websocket frame received
+  @map_refresh_interval 60
 
   # Client interface
 

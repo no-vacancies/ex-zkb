@@ -12,7 +12,7 @@ defmodule ExZkb.Pathfinder do
       iex> ExZkb.Pathfinder.in_chain?(30000970)
       false
   """
-  @spec in_chain?(integer) :: boolean
+  @spec in_chain?(integer()) :: boolean()
   def in_chain?(system_id) do
     Worker.in_chain?(system_id)
   end

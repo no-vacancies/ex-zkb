@@ -8,13 +8,15 @@ defmodule ExZkb.Pathfinder.Chain do
   alias ExZkb.Pathfinder.{Connection, Repo, System}
 
   def find_connections(map_id) do
-    query = from c in Connection,
+    query =
+      from(c in Connection,
               join: src in System,
               on: [id: c.source],
               join: dst in System,
               on: [id: c.target],
               where: c.mapId == ^map_id,
               select: {src.systemId, dst.systemId}
+      )
 
     Repo.all(query)
   end
@@ -69,18 +71,22 @@ defmodule ExZkb.Pathfinder.Chain do
   end
 
   def system_labels(map_id) do
-    target_query = from c in Connection,
+    target_query =
+      from(c in Connection,
                    join: dst in System,
                    on: [id: c.target],
                    where: c.mapId == ^map_id,
                    select: {dst.systemId, dst.alias}
+      )
 
-    query = from c in Connection,
+    query =
+      from(c in Connection,
             join: src in System,
             on: [id: c.source],
             where: c.mapId == ^map_id,
             select: {src.systemId, src.alias},
             union: ^target_query
+      )
 
     Repo.all(query)
   end

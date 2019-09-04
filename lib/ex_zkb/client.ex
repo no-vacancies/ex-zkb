@@ -72,23 +72,29 @@ defmodule ExZkb.Client do
   ## Server callbacks
 
   def handle_connect(_conn, state) do
-    Logger.info("Websocket Connected with state #{inspect state}")
+    Logger.info("Websocket Connected with state #{inspect(state)}")
+
     case state[:channels] do
       %MapSet{} = channels -> subscribe(channels)
       nil -> :noop
     end
+
     {:ok, state}
   end
 
   def handle_cast({:subscribe, channel}, state) do
-    new_state = Map.update(state, :channels, MapSet.new([channel]), fn c -> MapSet.put(c, channel) end)
+    new_state =
+      Map.update(state, :channels, MapSet.new([channel]), fn c -> MapSet.put(c, channel) end)
+
     message = %{"action" => "sub", "channel" => channel}
     frame = {:text, Jason.encode!(message)}
     {:reply, frame, new_state}
   end
 
   def handle_cast({:unsubscribe, channel}, state) do
-    new_state = Map.update(state, :channels, MapSet.new([]), fn c -> MapSet.delete(c, channel) end)
+    new_state =
+      Map.update(state, :channels, MapSet.new([]), fn c -> MapSet.delete(c, channel) end)
+
     message = %{"action" => "unsub", "channel" => channel}
     frame = {:text, Jason.encode!(message)}
     {:reply, frame, new_state}
@@ -99,11 +105,12 @@ defmodule ExZkb.Client do
       {:ok, message} -> process_json_frame(message)
       _ -> :ok
     end
+
     {:ok, state}
   end
 
   def handle_frame({type, msg}, state) do
-    Logger.info("Received unknown Message - Type: #{inspect type} -- Message: #{inspect msg}")
+    Logger.info("Received unknown Message - Type: #{inspect(type)} -- Message: #{inspect(msg)}")
     {:ok, state}
   end
 
