@@ -48,6 +48,7 @@ defmodule ExZkb.Handler do
 
   def process(%Kill{in_corp: false, in_chain: true} = kill) do
     Logger.debug("Posting to #chain-kills...")
+
     kill
     |> ExZkb.Discord.send()
   end

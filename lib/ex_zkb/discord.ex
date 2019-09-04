@@ -5,7 +5,7 @@ defmodule ExZkb.Discord do
   alias ExZkb.Discord.Message
   alias ExZkb.Kill
 
-  @webhook_url Application.get_env(:ex_zkb, ExZkb.Discord)[:webhook_url]
+  @webhook_url Application.get_env(:ex_zkb, ExZkb.Discord)[:webhook_url] || ""
 
   def format(%Kill{in_chain: true} = kill) do
     system = List.last(kill.route)

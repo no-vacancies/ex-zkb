@@ -19,5 +19,4 @@ config :ex_zkb, ExZkb.Pathfinder.Repo,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
-config :ex_zkb, ExZkb.Discord,
-  webhook_url: webhook_url
+config :ex_zkb, ExZkb.Discord, webhook_url: webhook_url

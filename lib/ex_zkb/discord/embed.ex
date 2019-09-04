@@ -12,7 +12,7 @@ defmodule ExZkb.Discord.Embed do
     :video,
     :provider,
     :author,
-    :fields,
+    :fields
   ]
 
   defmodule Footer do
